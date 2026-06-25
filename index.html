@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>candle_bymisk — Boutique</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f5f0e8;
+      --warm-white: #faf7f2;
+      --sand: #e2d5be;
+      --clay: #c4a882;
+      --bark: #8b6f47;
+      --earth: #5c4429;
+      --smoke: #9e9488;
+      --charcoal: #2e2720;
+      --accent: #c17f3e;
+    }
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--warm-white);
+      color: var(--charcoal);
+    }
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.4rem 3rem;
+      background: rgba(250,247,242,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--sand);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--earth);
+      text-decoration: none;
+    }
+    .nav-logo span { font-style: italic; color: var(--accent); }
+    .hero {
+      margin-top: 80px;
+      padding: 5rem 3rem 3rem;
+      text-align: center;
+      background: linear-gradient(135deg, var(--cream), var(--warm-white));
+    }
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--clay);
+      margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--earth);
+      margin-bottom: 0.8rem;
+    }
+    .hero h1 em { font-style: italic; color: var(--accent); }
+    .hero p {
+      font-size: 0.9rem;
+      color: var(--smoke);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .shop {
+      padding: 4rem 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    #message {
+      text-align: center;
+      color: var(--smoke);
+      font-style: italic;
+      padding: 3rem;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+    .product-card {
+      background: white;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(92,68,41,0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 24px rgba(92,68,41,0.15);
+    }
+    .product-img {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+    }
+    .product-info { padding: 1.2rem; }
+    .product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--earth);
+      margin-bottom: 0.4rem;
+    }
+    .product-desc {
+      font-size: 0.82rem;
+      color: var(--smoke);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .product-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .product-stock {
+      font-size: 0.72rem;
+      color: var(--smoke);
+      letter-spacing: 0.08em;
+    }
+    .product-stock.low { color: #c05555; }
+    footer {
+      background: var(--charcoal);
+      text-align: center;
+      padding: 2rem;
+      color: var(--smoke);
+      font-size: 0.82rem;
+      margin-top: 4rem;
+    }
+    footer span { color: var(--accent); font-family: 'Cormorant Garamond', serif; font-style: italic; }
+    .loading {
+      text-align: center;
+      padding: 4rem;
+      color: var(--clay);
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-logo">candle_<span>bymisk</span></a>
+    <span style="font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--smoke)">✦ Bougies Artisanales</span>
+  </nav>
+
+  <section class="hero">
+    <p class="hero-eyebrow">✦ Collection Artisanale</p>
+    <h1>Nos <em>bougies</em></h1>
+    <p>Chaque bougie est façonnée à la main avec des cires naturelles et des huiles essentielles.</p>
+  </section>
+
+  <section class="shop">
+    <div id="message" class="loading">Chargement des produits...</div>
+    <div class="product-grid" id="productGrid"></div>
+  </section>
+
+  <footer>
+    © 2026 candle_<span>bymisk</span> — Fait avec 🕯️ au Maroc
+  </footer>
+
+  <script>
+    fetch('http://localhost:3000/api/products')
+      .then(res => res.json())
+      .then(products => {
+        const msg = document.getElementById('message');
+        const grid = document.getElementById('productGrid');
+
+        if (products.length === 0) {
+          msg.textContent = 'Aucun produit disponible pour le moment.';
+          return;
+        }
+
+        msg.style.display = 'none';
+
+        grid.innerHTML = products.map(p => `
+          <div class="product-card">
+           <div class="product-img">
+  ${p.imageUrl 
+    ? `<img src="${p.imageUrl}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">` 
+    : '🕯️'}
+</div>
+            <div class="product-info">
+              <h3 class="product-name">${p.name}</h3>
+              <p class="product-desc">${p.description || 'Bougie artisanale marocaine'}</p>
+              <div class="product-footer">
+                <span class="product-price">${p.price} dh</span>
+                <span class="product-stock ${p.stock <= 3 ? 'low' : ''}">
+                  ${p.stock <= 3 ? '⚠️ ' : ''}Stock : ${p.stock}
+                </span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      })
+      .catch(() => {
+        document.getElementById('message').textContent = '⚠️ Impossible de charger les produits. Vérifiez que le serveur est démarré.';
+      });
+  </script>
+</body>
+</html>
