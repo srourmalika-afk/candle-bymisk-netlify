@@ -178,7 +178,7 @@
   </footer>
 
   <script>
-    fetch('http://localhost:3000/api/products')
+    fetch('/.netlify/functions/products')
       .then(res => res.json())
       .then(products => {
         const msg = document.getElementById('message');
