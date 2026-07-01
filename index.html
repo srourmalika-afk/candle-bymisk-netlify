@@ -138,6 +138,28 @@
       letter-spacing: 0.08em;
     }
     .product-stock.low { color: #c05555; }
+.size-selector {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+.size-btn {
+  flex: 1;
+  padding: 0.4rem;
+  font-size: 0.75rem;
+  font-family: 'Jost', sans-serif;
+  border: 1px solid var(--sand);
+  background: var(--cream);
+  color: var(--earth);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.size-btn.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
     footer {
       background: var(--charcoal);
       text-align: center;
@@ -178,6 +200,7 @@
   </footer>
 
   <script>
+    <script>
     fetch('/.netlify/functions/products')
       .then(res => res.json())
       .then(products => {
@@ -191,29 +214,63 @@
 
         msg.style.display = 'none';
 
-        grid.innerHTML = products.map(p => `
+        grid.innerHTML = products.map((p, idx) => {
+          const hasSizes = p.sizes && p.sizes.length > 0;
+          const first = hasSizes ? p.sizes[0] : null;
+          const initialImg = hasSizes ? first.imageUrl : p.imageUrl;
+          const initialPrice = hasSizes ? first.price : p.price;
+
+          const sizeButtons = hasSizes ? `
+            <div class="size-selector">
+              ${p.sizes.map((s, i) => `
+                <button type="button" class="size-btn ${i === 0 ? 'active' : ''}"
+                  onclick="selectSize(${idx}, ${i})">${s.label}</button>
+              `).join('')}
+            </div>
+          ` : '';
+
+          return `
           <div class="product-card">
-           <div class="product-img">
-  ${p.imageUrl 
-    ? `<img src="${p.imageUrl}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">` 
+           <div class="product-img" id="img-${idx}">
+  ${initialImg 
+    ? `<img src="${initialImg}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">` 
     : '🕯️'}
 </div>
             <div class="product-info">
               <h3 class="product-name">${p.name}</h3>
               <p class="product-desc">${p.description || 'Bougie artisanale marocaine'}</p>
+              ${sizeButtons}
               <div class="product-footer">
-                <span class="product-price">${p.price} dh</span>
+                <span class="product-price" id="price-${idx}">${initialPrice} dh</span>
                 <span class="product-stock ${p.stock <= 3 ? 'low' : ''}">
                   ${p.stock <= 3 ? '⚠️ ' : ''}Stock : ${p.stock}
                 </span>
               </div>
             </div>
           </div>
-        `).join('');
+        `;
+        }).join('');
+
+        window.productsData = products;
       })
       .catch(() => {
         document.getElementById('message').textContent = '⚠️ Impossible de charger les produits. Vérifiez que le serveur est démarré.';
       });
+
+    function selectSize(productIdx, sizeIdx) {
+      const product = window.productsData[productIdx];
+      const size = product.sizes[sizeIdx];
+
+      document.getElementById(`img-${productIdx}`).innerHTML =
+        `<img src="${size.imageUrl}" alt="${product.name}" style="width:100%;height:100%;object-fit:cover;">`;
+      document.getElementById(`price-${productIdx}`).textContent = `${size.price} dh`;
+
+      const card = document.getElementById(`img-${productIdx}`).closest('.product-card');
+      card.querySelectorAll('.size-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === sizeIdx);
+      });
+    }
+  </script>
   </script>
 </body>
 </html>
