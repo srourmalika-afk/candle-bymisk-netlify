@@ -160,6 +160,44 @@
       color: white;
       border-color: var(--accent);
     }
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.85);
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--earth);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .carousel-arrow:hover { background: var(--accent); color: white; }
+    .carousel-arrow.prev { left: 8px; }
+    .carousel-arrow.next { right: 8px; }
+    .carousel-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 0; right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      z-index: 2;
+    }
+    .carousel-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.6);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .carousel-dot.active { background: var(--accent); }
     footer {
       background: var(--charcoal);
       text-align: center;
@@ -215,8 +253,9 @@
 
         grid.innerHTML = products.map((p, idx) => {
           const hasSizes = p.sizes && p.sizes.length > 0;
+          const hasGallery = p.images && p.images.length > 1;
           const first = hasSizes ? p.sizes[0] : null;
-          const initialImg = hasSizes ? first.imageUrl : p.imageUrl;
+          const initialImg = hasSizes ? first.imageUrl : (hasGallery ? p.images[0] : p.imageUrl);
           const initialPrice = hasSizes ? first.price : p.price;
 
           const sizeButtons = hasSizes ? `
@@ -228,12 +267,23 @@
             </div>
           ` : '';
 
+          const carouselControls = hasGallery ? `
+            <button type="button" class="carousel-arrow prev" onclick="event.stopPropagation(); shiftImage(${idx}, -1)">‹</button>
+            <button type="button" class="carousel-arrow next" onclick="event.stopPropagation(); shiftImage(${idx}, 1)">›</button>
+            <div class="carousel-dots">
+              ${p.images.map((_, i) => `
+                <span class="carousel-dot ${i === 0 ? 'active' : ''}" onclick="event.stopPropagation(); goToImage(${idx}, ${i})"></span>
+              `).join('')}
+            </div>
+          ` : '';
+
           return `
           <div class="product-card">
-           <div class="product-img" id="img-${idx}">
+           <div class="product-img" id="img-${idx}" style="position:relative;">
   ${initialImg 
     ? `<img src="${initialImg}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">` 
     : '🕯️'}
+  ${carouselControls}
 </div>
             <div class="product-info">
               <h3 class="product-name">${p.name}</h3>
@@ -255,6 +305,32 @@
       .catch(() => {
         document.getElementById('message').textContent = '⚠️ Impossible de charger les produits. Vérifiez que le serveur est démarré.';
       });
+
+    window.carouselState = {};
+
+    function renderCarouselImage(productIdx) {
+      const product = window.productsData[productIdx];
+      const state = window.carouselState[productIdx] || 0;
+      const imgContainer = document.getElementById(`img-${productIdx}`);
+      const existingImg = imgContainer.querySelector('img');
+      if (existingImg) existingImg.src = product.images[state];
+
+      const dots = imgContainer.querySelectorAll('.carousel-dot');
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === state));
+    }
+
+    function shiftImage(productIdx, direction) {
+      const product = window.productsData[productIdx];
+      const total = product.images.length;
+      const current = window.carouselState[productIdx] || 0;
+      window.carouselState[productIdx] = (current + direction + total) % total;
+      renderCarouselImage(productIdx);
+    }
+
+    function goToImage(productIdx, imgIdx) {
+      window.carouselState[productIdx] = imgIdx;
+      renderCarouselImage(productIdx);
+    }
 
     function selectSize(productIdx, sizeIdx) {
       const product = window.productsData[productIdx];
