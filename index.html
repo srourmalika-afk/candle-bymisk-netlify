@@ -70,6 +70,43 @@
       max-width: 500px;
       margin: 0 auto;
     }
+    .trust-badges {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.6rem;
+    }
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: #7a3b48;
+    }
+    .trust-badge svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .video-section {
+      max-width: 1000px;
+      margin: 3rem auto;
+      padding: 0 3rem;
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+    .video-section video {
+      width: 220px;
+      border-radius: 12px;
+      display: block;
+      box-shadow: 0 8px 24px rgba(122,59,72,0.15);
+      flex-shrink: 0;
+    }
+    .video-text p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-style: italic;
+      color: #7a3b48;
+      line-height: 1.4;
+    }
     .shop {
       padding: 4rem 3rem;
       max-width: 1200px;
@@ -226,6 +263,18 @@
     <p class="hero-eyebrow">✦ Collection Artisanale</p>
     <h1>Nos <em>bougies</em></h1>
     <p>Chaque bougie est façonnée à la main avec des cires naturelles et des huiles essentielles.</p>
+    <div class="trust-badges">
+      <span class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"></path><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"></path><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path></svg>Fait main</span>
+      <span class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg>Cire naturelle</span>
+      <span class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>Livraison partout au Maroc</span>
+    </div>
+  </section>
+
+  <section class="video-section">
+    <video src="bougies.mp4" width="220" height="391" autoplay muted loop playsinline></video>
+    <div class="video-text">
+      <p>Découvrez nos bougies artisanales, faites main avec amour, dans cette vidéo.</p>
+    </div>
   </section>
 
   <section class="shop">
