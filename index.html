@@ -55,12 +55,22 @@
       align-items: center;
       gap: 3rem;
     }
+    .hero-video-col { flex-shrink: 0; }
+    .discover-link {
+      display: block;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #c1607a;
+      text-decoration: none;
+      margin-bottom: 0.6rem;
+      text-align: center;
+    }
     .hero video {
-      width: 200px;
+      width: 300px;
       border-radius: 12px;
       display: block;
       box-shadow: 0 8px 24px rgba(122,59,72,0.15);
-      flex-shrink: 0;
     }
     .hero-content { text-align: left; }
     .hero-eyebrow {
@@ -251,7 +261,10 @@
 
   <section class="hero">
     <div class="hero-inner">
-      <video src="bougies.mp4" width="200" height="356" autoplay muted loop playsinline></video>
+      <div class="hero-video-col">
+        <a href="#productGrid" class="discover-link">Découvrir nos produits</a>
+        <video src="bougies.mp4" width="300" height="533" autoplay muted loop playsinline></video>
+      </div>
       <div class="hero-content">
         <p class="hero-eyebrow">✦ Collection Artisanale</p>
         <h1>Nos <em>bougies</em></h1>
