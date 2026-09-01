@@ -583,7 +583,7 @@
       name += ' - ' + color.label;
       variantKey += '-' + color.label;
 
-      addToCart(variantKey, currentProduct._id, name, price, image);
+      addToCart(variantKey, currentProduct._id, name, price, image, currentProduct.stock);
     }
   </script>
   <script src="cart.js"></script>

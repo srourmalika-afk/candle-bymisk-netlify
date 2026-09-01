@@ -10,11 +10,25 @@ function saveCart(cart) {
   updateCartBadge();
 }
 
-function addToCart(id, productId, name, price, image) {
+function addToCart(id, productId, name, price, image, stock) {
   const cart = getCart();
   const existing = cart.find(item => item.id === id);
-  if (existing) { existing.qty += 1; }
-  else { cart.push({ id, productId, name, price, image, qty: 1 }); }
+  const maxStock = typeof stock === 'number' ? stock : Infinity;
+
+  if (existing) {
+    if (existing.qty >= maxStock) {
+      alert('Stock maximum atteint pour ce produit (' + maxStock + ' disponible' + (maxStock > 1 ? 's' : '') + ').');
+      openCart();
+      return;
+    }
+    existing.qty += 1;
+  } else {
+    if (maxStock <= 0) {
+      alert('Ce produit est actuellement en rupture de stock.');
+      return;
+    }
+    cart.push({ id, productId, name, price, image, qty: 1, stock: maxStock });
+  }
   saveCart(cart);
   openCart();
 }
@@ -37,7 +51,7 @@ function addToCartFromCard(idx) {
       variantKey += '-' + activeBtn.textContent.trim();
     }
   }
-  addToCart(variantKey, product._id, name, price, image);
+  addToCart(variantKey, product._id, name, price, image, product.stock);
 }
 
 function removeFromCart(id) {
@@ -50,6 +64,11 @@ function changeQty(id, delta) {
   const cart = getCart();
   const item = cart.find(i => i.id === id);
   if (!item) return;
+  const maxStock = typeof item.stock === 'number' ? item.stock : Infinity;
+  if (delta > 0 && item.qty >= maxStock) {
+    alert('Stock maximum atteint pour ce produit (' + maxStock + ' disponible' + (maxStock > 1 ? 's' : '') + ').');
+    return;
+  }
   item.qty += delta;
   if (item.qty <= 0) { removeFromCart(id); return; }
   saveCart(cart);
@@ -105,7 +124,10 @@ function renderCart() {
 
   if (formWrap) formWrap.style.display = 'block';
 
-  container.innerHTML = cart.map(item => `
+  container.innerHTML = cart.map(item => {
+    const maxStock = typeof item.stock === 'number' ? item.stock : Infinity;
+    const atMax = item.qty >= maxStock;
+    return `
     <div class="cart-item">
       <div class="cart-item-img">${item.image ? `<img src="${item.image}" alt="${item.name}">` : '🕯️'}</div>
       <div class="cart-item-info">
@@ -114,12 +136,13 @@ function renderCart() {
         <div class="cart-qty">
           <button type="button" onclick="changeQty('${item.id}', -1)">−</button>
           <span>${item.qty}</span>
-          <button type="button" onclick="changeQty('${item.id}', 1)">+</button>
+          <button type="button" onclick="changeQty('${item.id}', 1)" ${atMax ? 'style="opacity:0.4;cursor:not-allowed;"' : ''}>+</button>
         </div>
       </div>
       <button type="button" class="cart-item-remove" onclick="removeFromCart('${item.id}')" aria-label="Retirer">✕</button>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   updateShippingDisplay();
 }
