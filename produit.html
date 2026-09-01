@@ -440,6 +440,19 @@
     let currentSizeIndex = 0;
     let currentColorIndex = 0;
 
+    const GLOBAL_COLORS = [
+      { label: 'Blanc', hex: '#ffffff' },
+      { label: 'Rouge', hex: '#c1272d' },
+      { label: 'Rose', hex: '#e8b4bc' },
+      { label: 'Violet', hex: '#8e6fa8' },
+      { label: 'Gris', hex: '#9e9488' },
+      { label: 'Noir', hex: '#2e2720' },
+      { label: 'Bleu', hex: '#5b7fa6' },
+      { label: 'Vert', hex: '#7a9b76' },
+      { label: 'Beige', hex: '#e2d5be' },
+      { label: 'Marron', hex: '#6b4226' }
+    ];
+
     function getProductId() {
       const params = new URLSearchParams(window.location.search);
       return params.get('id');
@@ -490,15 +503,15 @@
           </div>
         ` : '';
 
-        const hasColors = product.colors && product.colors.length > 0;
-        const colorHtml = hasColors ? `
-          <p class="detail-section-label">Couleur <span class="color-label" id="colorLabel">${product.colors[0].label}</span></p>
+        const hasColors = true;
+        const colorHtml = `
+          <p class="detail-section-label">Couleur <span class="color-label" id="colorLabel">${GLOBAL_COLORS[0].label}</span></p>
           <div class="color-selector">
-            ${product.colors.map((c, i) => `
-              <button type="button" class="color-swatch ${i === 0 ? 'active' : ''}" style="background:${c.hex || '#ccc'}" onclick="selectDetailColor(${i})" aria-label="${c.label}"></button>
+            ${GLOBAL_COLORS.map((c, i) => `
+              <button type="button" class="color-swatch ${i === 0 ? 'active' : ''}" style="background:${c.hex}" onclick="selectDetailColor(${i})" aria-label="${c.label}"></button>
             `).join('')}
           </div>
-        ` : '';
+        `;
 
         wrap.innerHTML = `
           <div class="product-detail">
@@ -544,22 +557,14 @@
 
     function selectDetailColor(i) {
       currentColorIndex = i;
-      const color = currentProduct.colors[i];
+      const color = GLOBAL_COLORS[i];
       document.getElementById('colorLabel').textContent = color.label;
       document.querySelectorAll('.color-swatch').forEach((b, idx) => b.classList.toggle('active', idx === i));
-      if (color.imageUrl) {
-        const imgIdx = currentGalleryImages.indexOf(color.imageUrl);
-        if (imgIdx !== -1) { setMainImage(imgIdx); }
-        else {
-          document.getElementById('mainImage').innerHTML = `<img src="${color.imageUrl}" alt="${currentProduct.name}">`;
-        }
-      }
     }
 
     function addDetailToCart() {
       if (!currentProduct) return;
       const hasSizes = currentProduct.sizes && currentProduct.sizes.length > 0;
-      const hasColors = currentProduct.colors && currentProduct.colors.length > 0;
       let name = currentProduct.name;
       let price, image, variantKey = currentProduct._id;
 
@@ -574,12 +579,9 @@
         image = currentGalleryImages[currentImgIndex] || currentProduct.imageUrl;
       }
 
-      if (hasColors) {
-        const color = currentProduct.colors[currentColorIndex];
-        name += ' - ' + color.label;
-        variantKey += '-' + color.label;
-        if (color.imageUrl) image = color.imageUrl;
-      }
+      const color = GLOBAL_COLORS[currentColorIndex];
+      name += ' - ' + color.label;
+      variantKey += '-' + color.label;
 
       addToCart(variantKey, name, price, image);
     }
