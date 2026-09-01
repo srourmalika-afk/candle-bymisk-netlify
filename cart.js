@@ -60,19 +60,17 @@ function cartTotal(cart) {
   return cart.reduce((sum, i) => sum + i.price * i.qty, 0);
 }
 
-function calculateShipping(subtotal, city) {
+function calculateShipping(subtotal, zone) {
   if (subtotal >= 199) return 0;
-  const c = (city || '').trim().toLowerCase();
-  if (c.includes('casa')) return 20;
-  return 35;
+  return zone === 'casablanca' ? 20 : 35;
 }
 
 function updateShippingDisplay() {
   const cart = getCart();
   const subtotal = cartTotal(cart);
-  const villeInput = document.querySelector('#cartFormWrap input[name="ville"]');
-  const city = villeInput ? villeInput.value : '';
-  const shipping = calculateShipping(subtotal, city);
+  const zoneInput = document.querySelector('#cartFormWrap input[name="zone"]:checked');
+  const zone = zoneInput ? zoneInput.value : 'casablanca';
+  const shipping = calculateShipping(subtotal, zone);
 
   const subtotalEl = document.getElementById('cartSubtotal');
   const shippingEl = document.getElementById('cartShipping');
@@ -142,8 +140,8 @@ function submitOrder(event) {
 
   const form = event.target;
   const subtotal = cartTotal(cart);
-  const city = form.querySelector('[name="ville"]').value;
-  const shipping = calculateShipping(subtotal, city);
+  const zone = form.querySelector('[name="zone"]:checked').value;
+  const shipping = calculateShipping(subtotal, zone);
   const grandTotal = subtotal + shipping;
 
   const summary = cart.map(i => `${i.name} x${i.qty} — ${i.price * i.qty} dh`).join('\n');

@@ -353,6 +353,27 @@
       font-family: 'Jost', sans-serif;
       font-size: 0.85rem;
     }
+    .delivery-zone {
+      border: 1px solid var(--sand);
+      border-radius: 6px;
+      padding: 0.8rem 1rem;
+      margin-top: 0.8rem;
+    }
+    .delivery-zone legend {
+      font-size: 0.78rem;
+      color: #7a3b48;
+      padding: 0 0.3rem;
+    }
+    .delivery-zone label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--charcoal);
+      padding: 0.4rem 0;
+      cursor: pointer;
+    }
+    .delivery-zone input[type="radio"] { width: auto; accent-color: #c1607a; }
     .submit-order-btn {
       width: 100%;
       margin-top: 1.2rem;
@@ -437,7 +458,12 @@
           <label for="adresse2">Adresse</label>
           <input type="text" id="adresse2" name="adresse" required>
           <label for="ville2">Ville</label>
-          <input type="text" id="ville2" name="ville" required oninput="updateShippingDisplay()">
+          <input type="text" id="ville2" name="ville" required>
+          <fieldset class="delivery-zone">
+            <legend>Zone de livraison</legend>
+            <label><input type="radio" name="zone" value="casablanca" checked onchange="updateShippingDisplay()"> Casablanca — 20 dh</label>
+            <label><input type="radio" name="zone" value="autre" onchange="updateShippingDisplay()"> Reste du Maroc — 35 dh</label>
+          </fieldset>
           <input type="hidden" name="commande">
           <input type="hidden" name="frais_livraison">
           <input type="hidden" name="total">
