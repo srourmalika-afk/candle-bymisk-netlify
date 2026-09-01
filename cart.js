@@ -10,11 +10,11 @@ function saveCart(cart) {
   updateCartBadge();
 }
 
-function addToCart(id, name, price, image) {
+function addToCart(id, productId, name, price, image) {
   const cart = getCart();
   const existing = cart.find(item => item.id === id);
   if (existing) { existing.qty += 1; }
-  else { cart.push({ id, name, price, image, qty: 1 }); }
+  else { cart.push({ id, productId, name, price, image, qty: 1 }); }
   saveCart(cart);
   openCart();
 }
@@ -37,7 +37,7 @@ function addToCartFromCard(idx) {
       variantKey += '-' + activeBtn.textContent.trim();
     }
   }
-  addToCart(variantKey, name, price, image);
+  addToCart(variantKey, product._id, name, price, image);
 }
 
 function removeFromCart(id) {
@@ -133,6 +133,27 @@ function closeCart() {
   document.getElementById('cartModal').classList.remove('open');
 }
 
+function decrementStock(cart) {
+  return fetch('/.netlify/functions/products')
+    .then(res => res.json())
+    .then(products => {
+      const updates = cart.map(item => {
+        const product = products.find(p => p._id === item.productId);
+        if (!product) return Promise.resolve();
+        const newStock = Math.max(0, (product.stock || 0) - item.qty);
+        const updatedProduct = Object.assign({}, product, { stock: newStock });
+        delete updatedProduct._id;
+        return fetch('/.netlify/functions/products/' + item.productId, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedProduct)
+        });
+      });
+      return Promise.all(updates);
+    })
+    .catch(() => { /* silencieux : la commande reste valide même si la maj du stock échoue */ });
+}
+
 function submitOrder(event) {
   event.preventDefault();
   const cart = getCart();
@@ -156,6 +177,7 @@ function submitOrder(event) {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: data
   }).then(() => {
+    decrementStock(cart);
     localStorage.removeItem('candlebymisk_cart');
     updateCartBadge();
     document.getElementById('cartItems').innerHTML = '<p class="cart-empty">Merci ! Votre commande a bien été envoyée. Nous vous contacterons rapidement.</p>';
