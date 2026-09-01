@@ -23,9 +23,35 @@
       background: #fdf1f3;
       color: var(--charcoal);
     }
-    nav {
+    .announcement-bar {
       position: fixed;
       top: 0; left: 0; right: 0;
+      z-index: 101;
+      height: 34px;
+      background: #e4507a;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+    .announcement-track {
+      display: flex;
+      white-space: nowrap;
+      animation: scrollAnnouncement 18s linear infinite;
+    }
+    .announcement-track span {
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      color: #fff;
+      padding: 0 2.5rem;
+      flex-shrink: 0;
+    }
+    @keyframes scrollAnnouncement {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    nav {
+      position: fixed;
+      top: 34px; left: 0; right: 0;
       z-index: 100;
       display: flex;
       align-items: center;
@@ -44,7 +70,7 @@
     }
     .nav-logo span { font-style: italic; color: #c1607a; }
     .hero {
-      margin-top: 80px;
+      margin-top: 114px;
       padding: 3.5rem 3rem 2.5rem;
       background: #fdedf0;
       text-align: center;
@@ -298,6 +324,17 @@
   </style>
 </head>
 <body>
+
+  <div class="announcement-bar">
+    <div class="announcement-track">
+      <span>✦ Livraison gratuite à partir de 199 dh d'achat</span>
+      <span>✦ Livraison gratuite à partir de 199 dh d'achat</span>
+      <span>✦ Livraison gratuite à partir de 199 dh d'achat</span>
+      <span>✦ Livraison gratuite à partir de 199 dh d'achat</span>
+      <span>✦ Livraison gratuite à partir de 199 dh d'achat</span>
+      <span>✦ Livraison gratuite à partir de 199 dh d'achat</span>
+    </div>
+  </div>
 
   <nav>
     <a href="#" class="nav-logo">candle_<span>bymisk</span></a>
