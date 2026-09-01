@@ -463,6 +463,7 @@
             <legend>Zone de livraison</legend>
             <label><input type="radio" name="zone" value="casablanca" checked onchange="updateShippingDisplay()"> Casablanca — 20 dh</label>
             <label><input type="radio" name="zone" value="autre" onchange="updateShippingDisplay()"> Reste du Maroc — 35 dh</label>
+            <p style="font-size:0.72rem; color:#a3717d; margin-top:0.5rem; padding-top:0.5rem; border-top:1px solid var(--sand);">✦ Livraison gratuite dès 199 dh d'achat</p>
           </fieldset>
           <input type="hidden" name="commande">
           <input type="hidden" name="frais_livraison">
@@ -519,7 +520,7 @@
 
           return `
           <div class="product-card">
-           <div class="product-img" id="img-${idx}" style="position:relative;">
+           <div class="product-img" id="img-${idx}" style="position:relative;" onclick="if(event.target.tagName!=='BUTTON' && !event.target.closest('button')) window.location.href='produit.html?id='+encodeURIComponent('${p._id}')">
   ${initialImg 
     ? `<img src="${initialImg}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">` 
     : '🕯️'}

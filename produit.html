@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>candle_bymisk — Détail produit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f5f0e8;
+      --warm-white: #faf7f2;
+      --sand: #e2d5be;
+      --clay: #c4a882;
+      --bark: #8b6f47;
+      --earth: #5c4429;
+      --smoke: #9e9488;
+      --charcoal: #2e2720;
+      --accent: #c17f3e;
+    }
+    body {
+      font-family: 'Jost', sans-serif;
+      background: #fdf1f3;
+      color: var(--charcoal);
+    }
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.4rem 3rem;
+      background: rgba(255,249,250,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #fae3e8;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #7a3b48;
+      text-decoration: none;
+    }
+    .nav-logo span { font-style: italic; color: #c1607a; }
+    .back-link {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #a3717d;
+      text-decoration: none;
+    }
+    .nav-icons {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+    .cart-btn {
+      position: relative;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #7a3b48;
+      display: flex;
+      align-items: center;
+    }
+    .cart-btn svg { width: 22px; height: 22px; }
+    .cart-badge {
+      display: none;
+      position: absolute;
+      top: -6px; right: -8px;
+      background: #c1607a;
+      color: #fff;
+      font-size: 0.65rem;
+      width: 17px; height: 17px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+    }
+    .breadcrumb {
+      margin-top: 96px;
+      padding: 0 3rem;
+      font-size: 0.78rem;
+      color: var(--smoke);
+      max-width: 1100px;
+      margin-left: auto; margin-right: auto;
+    }
+    .breadcrumb a { color: var(--smoke); text-decoration: none; }
+    .product-detail {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.2rem 3rem 4rem;
+      display: flex;
+      gap: 2.5rem;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .gallery {
+      display: flex;
+      gap: 0.8rem;
+      flex: 1;
+      min-width: 280px;
+    }
+    .thumbs {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .thumb {
+      width: 64px; height: 64px;
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      background: white;
+      flex-shrink: 0;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .thumb.active { border-color: #c1607a; }
+    .main-image {
+      flex: 1;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 2px 16px rgba(92,68,41,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 5rem;
+    }
+    .main-image img { width: 100%; height: 100%; object-fit: cover; }
+    .detail-info {
+      flex: 1;
+      min-width: 280px;
+    }
+    .detail-info h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 400;
+      color: #7a3b48;
+      margin-bottom: 0.6rem;
+    }
+    .detail-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .detail-desc {
+      font-size: 0.9rem;
+      color: var(--smoke);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    .detail-stock {
+      font-size: 0.78rem;
+      color: var(--smoke);
+      letter-spacing: 0.05em;
+      margin-bottom: 1.5rem;
+    }
+    .detail-stock.low { color: #c05555; }
+    .detail-section-label {
+      font-size: 0.85rem;
+      color: #7a3b48;
+      margin-bottom: 0.6rem;
+      font-weight: 500;
+    }
+    .size-selector {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+    .size-btn {
+      padding: 0.55rem 1.1rem;
+      font-size: 0.82rem;
+      font-family: 'Jost', sans-serif;
+      border: 1px solid var(--sand);
+      background: var(--cream);
+      color: var(--earth);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .size-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .detail-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .detail-actions button {
+      flex: 1;
+      min-width: 180px;
+      padding: 0.9rem;
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-add {
+      background: #c1607a;
+      color: #fff;
+    }
+    .btn-add:hover { background: #a94d64; }
+    .btn-checkout {
+      background: #fff;
+      color: #7a3b48;
+      border: 1px solid #7a3b48 !important;
+    }
+    .btn-checkout:hover { background: #fdedf0; }
+    .loading {
+      text-align: center;
+      padding: 6rem 2rem;
+      color: var(--clay);
+      font-style: italic;
+    }
+    footer {
+      background: var(--charcoal);
+      text-align: center;
+      padding: 2rem;
+      color: var(--smoke);
+      font-size: 0.82rem;
+      margin-top: 2rem;
+    }
+    footer span { color: var(--accent); font-family: 'Cormorant Garamond', serif; font-style: italic; }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(46,39,32,0.5);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: 10px;
+      max-width: 460px;
+      width: 100%;
+      padding: 2rem;
+      position: relative;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--smoke);
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-box h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      color: #7a3b48;
+      margin-bottom: 1.2rem;
+    }
+    .cart-empty { color: var(--smoke); font-style: italic; font-size: 0.85rem; }
+    .cart-item {
+      display: flex;
+      gap: 0.8rem;
+      align-items: center;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid #f3e0e4;
+    }
+    .cart-item-img {
+      width: 54px; height: 54px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--cream);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
+    .cart-item-info { flex: 1; }
+    .cart-item-name { font-size: 0.85rem; color: var(--earth); margin-bottom: 0.2rem; }
+    .cart-item-price { font-size: 0.78rem; color: var(--accent); margin-bottom: 0.3rem; }
+    .cart-qty { display: flex; align-items: center; gap: 0.6rem; }
+    .cart-qty button {
+      width: 22px; height: 22px;
+      border: 1px solid var(--sand);
+      background: white;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      line-height: 1;
+    }
+    .cart-qty span { font-size: 0.85rem; }
+    .cart-item-remove {
+      background: none; border: none; color: var(--smoke);
+      cursor: pointer; font-size: 0.9rem; flex-shrink: 0;
+    }
+    .cart-total-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 0; font-size: 1rem; color: #7a3b48;
+      border-top: 1px solid #f3e0e4; margin-top: 0.5rem;
+    }
+    #cartFormWrap { display: none; }
+    #cartFormWrap label { display: block; font-size: 0.78rem; color: #7a3b48; margin: 0.7rem 0 0.3rem; }
+    #cartFormWrap input, #cartFormWrap textarea {
+      width: 100%; padding: 0.55rem 0.7rem; border: 1px solid var(--sand);
+      border-radius: 4px; font-family: 'Jost', sans-serif; font-size: 0.85rem;
+    }
+    .delivery-zone { border: 1px solid var(--sand); border-radius: 6px; padding: 0.8rem 1rem; margin-top: 0.8rem; }
+    .delivery-zone legend { font-size: 0.78rem; color: #7a3b48; padding: 0 0.3rem; }
+    .delivery-zone label {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.85rem; color: var(--charcoal); padding: 0.4rem 0; cursor: pointer;
+    }
+    .delivery-zone input[type="radio"] { width: auto; accent-color: #c1607a; }
+    .submit-order-btn {
+      width: 100%; margin-top: 1.2rem; padding: 0.7rem;
+      background: #7a3b48; color: #fff; border: none; border-radius: 4px;
+      font-size: 0.85rem; letter-spacing: 0.03em; cursor: pointer;
+    }
+    .submit-order-btn:hover { background: #632e39; }
+    .whatsapp-float {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      width: 54px; height: 54px; background: #25D366; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25); z-index: 150; text-decoration: none;
+    }
+    .whatsapp-float svg { width: 28px; height: 28px; fill: #fff; }
+    @media (max-width: 600px) {
+      .gallery { flex-direction: column-reverse; }
+      .thumbs { flex-direction: row; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">candle_<span>bymisk</span></a>
+    <div class="nav-icons">
+      <a href="produits.html" class="back-link">← Tous les produits</a>
+      <button type="button" class="cart-btn" onclick="openCart()" aria-label="Panier">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        <span class="cart-badge">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <p class="breadcrumb"><a href="index.html">Accueil</a> → <span id="crumbName">Produit</span></p>
+
+  <div id="detailWrap">
+    <div class="loading" id="loadingMsg">Chargement du produit...</div>
+  </div>
+
+  <footer>
+    © 2026 candle_<span>bymisk</span> — Fait avec 🕯️ au Maroc
+  </footer>
+
+  <div class="modal-overlay" id="cartModal">
+    <div class="modal-box">
+      <button type="button" class="modal-close" onclick="closeCart()">✕</button>
+      <h2>Votre panier</h2>
+      <div id="cartItems"></div>
+      <div class="cart-total-row" style="border-top:none; padding-bottom:0;">
+        <span>Sous-total</span>
+        <span id="cartSubtotal">0 dh</span>
+      </div>
+      <div class="cart-total-row" style="border-top:none; padding-top:0;">
+        <span>Livraison</span>
+        <span id="cartShipping">—</span>
+      </div>
+      <div class="cart-total-row">
+        <span>Total</span>
+        <strong id="cartTotal">0 dh</strong>
+      </div>
+      <div id="cartFormWrap">
+        <form name="commande" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="submitOrder(event)">
+          <input type="hidden" name="form-name" value="commande">
+          <p style="display:none;"><label>Ne pas remplir : <input name="bot-field"></label></p>
+          <label for="nom3">Nom complet</label>
+          <input type="text" id="nom3" name="nom" required>
+          <label for="telephone3">Téléphone</label>
+          <input type="tel" id="telephone3" name="telephone" required>
+          <label for="adresse3">Adresse</label>
+          <input type="text" id="adresse3" name="adresse" required>
+          <label for="ville3">Ville</label>
+          <input type="text" id="ville3" name="ville" required>
+          <fieldset class="delivery-zone">
+            <legend>Zone de livraison</legend>
+            <label><input type="radio" name="zone" value="casablanca" checked onchange="updateShippingDisplay()"> Casablanca — 20 dh</label>
+            <label><input type="radio" name="zone" value="autre" onchange="updateShippingDisplay()"> Reste du Maroc — 35 dh</label>
+            <p style="font-size:0.72rem; color:#a3717d; margin-top:0.5rem; padding-top:0.5rem; border-top:1px solid var(--sand);">✦ Livraison gratuite dès 199 dh d'achat</p>
+          </fieldset>
+          <input type="hidden" name="commande">
+          <input type="hidden" name="frais_livraison">
+          <input type="hidden" name="total">
+          <button type="submit" class="submit-order-btn">Passer la commande</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <a href="https://wa.me/212772141717" target="_blank" rel="noopener" class="whatsapp-float" aria-label="Nous contacter sur WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2Zm5.8 14.15c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.3-1.64-.6-2.88-1.24-4.76-4.14-4.9-4.33-.14-.2-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.26-.29.58-.36.77-.36h.55c.18 0 .42-.07.65.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.19-.15.31-.29.48-.14.17-.3.37-.43.5-.14.14-.29.29-.13.57.17.29.75 1.24 1.61 2 1.11.99 2.04 1.3 2.33 1.44.29.14.46.12.63-.07.17-.19.72-.84.91-1.13.19-.29.38-.24.63-.14.26.1 1.65.78 1.93.92.29.14.48.21.55.33.07.12.07.68-.17 1.36Z"/></svg>
+  </a>
+
+  <script>
+    let currentProduct = null;
+    let currentGalleryImages = [];
+    let currentImgIndex = 0;
+    let currentSizeIndex = 0;
+
+    function getProductId() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('id');
+    }
+
+    fetch('/.netlify/functions/products')
+      .then(res => res.json())
+      .then(products => {
+        window.productsData = products;
+        const id = getProductId();
+        const product = products.find(p => p._id === id);
+        const wrap = document.getElementById('detailWrap');
+
+        if (!product) {
+          wrap.innerHTML = '<div class="loading">Produit introuvable. <a href="produits.html">Retour à la boutique</a></div>';
+          return;
+        }
+
+        currentProduct = product;
+
+        const hasSizes = product.sizes && product.sizes.length > 0;
+        const hasGallery = product.images && product.images.length > 0;
+        currentGalleryImages = hasSizes
+          ? product.sizes.map(s => s.imageUrl)
+          : (hasGallery ? product.images : [product.imageUrl]);
+
+        document.getElementById('crumbName').textContent = product.name;
+        document.title = product.name + ' — candle_bymisk';
+
+        const initialPrice = hasSizes ? product.sizes[0].price : product.price;
+
+        const thumbsHtml = currentGalleryImages.length > 1 ? `
+          <div class="thumbs">
+            ${currentGalleryImages.map((img, i) => `
+              <div class="thumb ${i === 0 ? 'active' : ''}" onclick="setMainImage(${i})">
+                <img src="${img}" alt="${product.name}">
+              </div>
+            `).join('')}
+          </div>
+        ` : '';
+
+        const sizeHtml = hasSizes ? `
+          <p class="detail-section-label">Taille</p>
+          <div class="size-selector">
+            ${product.sizes.map((s, i) => `
+              <button type="button" class="size-btn ${i === 0 ? 'active' : ''}" onclick="selectDetailSize(${i})">${s.label}</button>
+            `).join('')}
+          </div>
+        ` : '';
+
+        wrap.innerHTML = `
+          <div class="product-detail">
+            <div class="gallery">
+              ${thumbsHtml}
+              <div class="main-image" id="mainImage">
+                ${currentGalleryImages[0] ? `<img src="${currentGalleryImages[0]}" alt="${product.name}">` : '🕯️'}
+              </div>
+            </div>
+            <div class="detail-info">
+              <h1>${product.name}</h1>
+              <p class="detail-price" id="detailPrice">${initialPrice} dh</p>
+              <p class="detail-desc">${product.description || 'Bougie artisanale marocaine, fabriquée à la main.'}</p>
+              <p class="detail-stock ${product.stock <= 3 ? 'low' : ''}">${product.stock <= 3 ? '⚠️ ' : ''}Stock disponible : ${product.stock}</p>
+              ${sizeHtml}
+              <div class="detail-actions">
+                <button type="button" class="btn-add" onclick="addDetailToCart()">Ajouter au panier</button>
+                <button type="button" class="btn-checkout" onclick="addDetailToCart(); document.getElementById('cartFormWrap').scrollIntoView({behavior:'smooth'});">Finaliser ma commande</button>
+              </div>
+            </div>
+          </div>
+        `;
+      })
+      .catch(() => {
+        document.getElementById('detailWrap').innerHTML = '<div class="loading">⚠️ Impossible de charger le produit.</div>';
+      });
+
+    function setMainImage(i) {
+      currentImgIndex = i;
+      document.getElementById('mainImage').innerHTML = `<img src="${currentGalleryImages[i]}" alt="${currentProduct.name}">`;
+      document.querySelectorAll('.thumb').forEach((t, idx) => t.classList.toggle('active', idx === i));
+    }
+
+    function selectDetailSize(i) {
+      currentSizeIndex = i;
+      const size = currentProduct.sizes[i];
+      document.getElementById('detailPrice').textContent = size.price + ' dh';
+      document.querySelectorAll('.size-btn').forEach((b, idx) => b.classList.toggle('active', idx === i));
+      const sizeImgIdx = currentGalleryImages.indexOf(size.imageUrl);
+      if (sizeImgIdx !== -1) setMainImage(sizeImgIdx);
+    }
+
+    function addDetailToCart() {
+      if (!currentProduct) return;
+      const hasSizes = currentProduct.sizes && currentProduct.sizes.length > 0;
+      let name = currentProduct.name;
+      let price, image, variantKey = currentProduct._id;
+
+      if (hasSizes) {
+        const size = currentProduct.sizes[currentSizeIndex];
+        price = size.price;
+        image = size.imageUrl;
+        name += ' (' + size.label + ')';
+        variantKey += '-' + size.label;
+      } else {
+        price = currentProduct.price;
+        image = currentGalleryImages[currentImgIndex] || currentProduct.imageUrl;
+      }
+
+      addToCart(variantKey, name, price, image);
+    }
+  </script>
+  <script src="cart.js"></script>
+</body>
+</html>
