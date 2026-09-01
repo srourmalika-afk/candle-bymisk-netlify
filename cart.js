@@ -60,6 +60,28 @@ function cartTotal(cart) {
   return cart.reduce((sum, i) => sum + i.price * i.qty, 0);
 }
 
+function calculateShipping(subtotal, city) {
+  if (subtotal >= 199) return 0;
+  const c = (city || '').trim().toLowerCase();
+  if (c.includes('casa')) return 20;
+  return 35;
+}
+
+function updateShippingDisplay() {
+  const cart = getCart();
+  const subtotal = cartTotal(cart);
+  const villeInput = document.querySelector('#cartFormWrap input[name="ville"]');
+  const city = villeInput ? villeInput.value : '';
+  const shipping = calculateShipping(subtotal, city);
+
+  const subtotalEl = document.getElementById('cartSubtotal');
+  const shippingEl = document.getElementById('cartShipping');
+  const totalEl = document.getElementById('cartTotal');
+  if (subtotalEl) subtotalEl.textContent = subtotal + ' dh';
+  if (shippingEl) shippingEl.textContent = subtotal === 0 ? '—' : (shipping === 0 ? 'Gratuite' : shipping + ' dh');
+  if (totalEl) totalEl.textContent = (subtotal + shipping) + ' dh';
+}
+
 function updateCartBadge() {
   const cart = getCart();
   const count = cart.reduce((sum, i) => sum + i.qty, 0);
@@ -78,8 +100,8 @@ function renderCart() {
 
   if (cart.length === 0) {
     container.innerHTML = '<p class="cart-empty">Votre panier est vide.</p>';
-    if (totalEl) totalEl.textContent = '0 dh';
     if (formWrap) formWrap.style.display = 'none';
+    updateShippingDisplay();
     return;
   }
 
@@ -101,7 +123,7 @@ function renderCart() {
     </div>
   `).join('');
 
-  if (totalEl) totalEl.textContent = cartTotal(cart) + ' dh';
+  updateShippingDisplay();
 }
 
 function openCart() {
@@ -119,10 +141,15 @@ function submitOrder(event) {
   if (cart.length === 0) return;
 
   const form = event.target;
+  const subtotal = cartTotal(cart);
+  const city = form.querySelector('[name="ville"]').value;
+  const shipping = calculateShipping(subtotal, city);
+  const grandTotal = subtotal + shipping;
+
   const summary = cart.map(i => `${i.name} x${i.qty} — ${i.price * i.qty} dh`).join('\n');
-  const total = cartTotal(cart);
   form.querySelector('[name="commande"]').value = summary;
-  form.querySelector('[name="total"]').value = total + ' dh';
+  form.querySelector('[name="frais_livraison"]').value = shipping === 0 ? 'Gratuite' : shipping + ' dh';
+  form.querySelector('[name="total"]').value = grandTotal + ' dh';
 
   const data = new URLSearchParams(new FormData(form)).toString();
 

@@ -414,6 +414,14 @@
       <button type="button" class="modal-close" onclick="closeCart()">✕</button>
       <h2>Votre panier</h2>
       <div id="cartItems"></div>
+      <div class="cart-total-row" style="border-top:none; padding-bottom:0;">
+        <span>Sous-total</span>
+        <span id="cartSubtotal">0 dh</span>
+      </div>
+      <div class="cart-total-row" style="border-top:none; padding-top:0;">
+        <span>Livraison</span>
+        <span id="cartShipping">—</span>
+      </div>
       <div class="cart-total-row">
         <span>Total</span>
         <strong id="cartTotal">0 dh</strong>
@@ -429,8 +437,9 @@
           <label for="adresse2">Adresse</label>
           <input type="text" id="adresse2" name="adresse" required>
           <label for="ville2">Ville</label>
-          <input type="text" id="ville2" name="ville" required>
+          <input type="text" id="ville2" name="ville" required oninput="updateShippingDisplay()">
           <input type="hidden" name="commande">
+          <input type="hidden" name="frais_livraison">
           <input type="hidden" name="total">
           <button type="submit" class="submit-order-btn">Passer la commande</button>
         </form>
