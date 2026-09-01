@@ -80,8 +80,9 @@ function cartTotal(cart) {
 }
 
 function calculateShipping(subtotal, zone) {
-  if (subtotal >= 199) return 0;
-  return zone === 'casablanca' ? 20 : 35;
+  if (zone === 'casablanca') return subtotal >= 199 ? 0 : 20;
+  if (zone === 'errahma') return 20;
+  return 35;
 }
 
 function updateShippingDisplay() {
