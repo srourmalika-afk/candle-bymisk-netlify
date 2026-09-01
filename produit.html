@@ -186,6 +186,29 @@
       color: white;
       border-color: var(--accent);
     }
+    .color-selector {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+    .color-swatch {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      box-shadow: 0 0 0 1px var(--sand);
+      padding: 0;
+    }
+    .color-swatch.active {
+      border-color: #fff;
+      box-shadow: 0 0 0 2px #c1607a;
+    }
+    .color-label {
+      font-size: 0.8rem;
+      color: var(--smoke);
+      margin-left: 0.3rem;
+    }
     .detail-actions {
       display: flex;
       gap: 1rem;
@@ -415,6 +438,7 @@
     let currentGalleryImages = [];
     let currentImgIndex = 0;
     let currentSizeIndex = 0;
+    let currentColorIndex = 0;
 
     function getProductId() {
       const params = new URLSearchParams(window.location.search);
@@ -466,6 +490,16 @@
           </div>
         ` : '';
 
+        const hasColors = product.colors && product.colors.length > 0;
+        const colorHtml = hasColors ? `
+          <p class="detail-section-label">Couleur <span class="color-label" id="colorLabel">${product.colors[0].label}</span></p>
+          <div class="color-selector">
+            ${product.colors.map((c, i) => `
+              <button type="button" class="color-swatch ${i === 0 ? 'active' : ''}" style="background:${c.hex || '#ccc'}" onclick="selectDetailColor(${i})" aria-label="${c.label}"></button>
+            `).join('')}
+          </div>
+        ` : '';
+
         wrap.innerHTML = `
           <div class="product-detail">
             <div class="gallery">
@@ -480,6 +514,7 @@
               <p class="detail-desc">${product.description || 'Bougie artisanale marocaine, fabriquée à la main.'}</p>
               <p class="detail-stock ${product.stock <= 3 ? 'low' : ''}">${product.stock <= 3 ? '⚠️ ' : ''}Stock disponible : ${product.stock}</p>
               ${sizeHtml}
+              ${colorHtml}
               <div class="detail-actions">
                 <button type="button" class="btn-add" onclick="addDetailToCart()">Ajouter au panier</button>
                 <button type="button" class="btn-checkout" onclick="addDetailToCart(); document.getElementById('cartFormWrap').scrollIntoView({behavior:'smooth'});">Finaliser ma commande</button>
@@ -507,9 +542,24 @@
       if (sizeImgIdx !== -1) setMainImage(sizeImgIdx);
     }
 
+    function selectDetailColor(i) {
+      currentColorIndex = i;
+      const color = currentProduct.colors[i];
+      document.getElementById('colorLabel').textContent = color.label;
+      document.querySelectorAll('.color-swatch').forEach((b, idx) => b.classList.toggle('active', idx === i));
+      if (color.imageUrl) {
+        const imgIdx = currentGalleryImages.indexOf(color.imageUrl);
+        if (imgIdx !== -1) { setMainImage(imgIdx); }
+        else {
+          document.getElementById('mainImage').innerHTML = `<img src="${color.imageUrl}" alt="${currentProduct.name}">`;
+        }
+      }
+    }
+
     function addDetailToCart() {
       if (!currentProduct) return;
       const hasSizes = currentProduct.sizes && currentProduct.sizes.length > 0;
+      const hasColors = currentProduct.colors && currentProduct.colors.length > 0;
       let name = currentProduct.name;
       let price, image, variantKey = currentProduct._id;
 
@@ -522,6 +572,13 @@
       } else {
         price = currentProduct.price;
         image = currentGalleryImages[currentImgIndex] || currentProduct.imageUrl;
+      }
+
+      if (hasColors) {
+        const color = currentProduct.colors[currentColorIndex];
+        name += ' - ' + color.label;
+        variantKey += '-' + color.label;
+        if (color.imageUrl) image = color.imageUrl;
       }
 
       addToCart(variantKey, name, price, image);
